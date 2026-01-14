@@ -3,7 +3,6 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	"users-by-go-example/global"
 	"users-by-go-example/utils"
 
 	"github.com/gin-gonic/gin"
@@ -13,14 +12,14 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// 检查是否在白名单中
-		cfg := global.GetConfig()
-		path := ctx.Request.URL.Path
-		for _, whitePath := range cfg.WhiteList {
-			if path == whitePath {
-				ctx.Next()
-				return
-			}
-		}
+		//cfg := global.GetConfig()
+		//path := ctx.Request.URL.Path
+		//for _, whitePath := range cfg.WhiteList {
+		//	if path == whitePath {
+		//		ctx.Next()
+		//		return
+		//	}
+		//}
 
 		// 获取 Authorization header
 		authHeader := ctx.GetHeader("Authorization")

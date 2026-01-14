@@ -26,7 +26,7 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 	lock := utils.NewRedisLock(rdb, "register:"+req.Username, 10*time.Second)
 
 	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
-	if err := lock.TryLock(ctx, 3, 100*time.Millisecond); err != nil {
+	if err := lock.TryLock(ctx, 1, 100*time.Millisecond); err != nil {
 		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
 		}
@@ -158,7 +158,7 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 	lock := utils.NewRedisLock(rdb, fmt.Sprintf("update:user:%d", id), 10*time.Second)
 
 	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
-	if err := lock.TryLock(ctx, 3, 100*time.Millisecond); err != nil {
+	if err := lock.TryLock(ctx, 1, 100*time.Millisecond); err != nil {
 		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
 		}
