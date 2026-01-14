@@ -1,0 +1,95 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+coverage.html
+
+# Go workspace file
+go.work
+
+# Dependency directories
+vendor/
+
+# Go build cache
+.cache/
+
+# Binary output
+/users-by-go-example
+/users-by-go-example.exe
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+logs/
+*.log
+/keepLogs/
+/sadkLogs/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+### IDE ###
+
+# IntelliJ IDEA / GoLand
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+### OS ###
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+.Trash-*
+
+### Project Specific ###
+
+# Claude Code
+.claude/
+
+# Config files with secrets (keep templates)
+config/local.yaml
+config/prod.yaml
+config/*-local.yaml
