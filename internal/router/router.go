@@ -16,21 +16,18 @@ func SetupRouter() *gin.Engine {
 
 	// API v1 路由组
 	v1 := router.Group("/api/v1")
-	{
-		// 公开接口（不需要认证）
-		v1.POST("/register", userHandler.Register)
-		v1.POST("/login", userHandler.Login)
 
-		// 需要认证的接口
-		v1.Use(middleware.AuthMiddleware())
-		{
-			// 用户管理接口 - 统一使用 POST
-			v1.POST("/users/list", userHandler.GetUserList)
-			v1.POST("/users/get", userHandler.GetUserByID)
-			v1.POST("/users/update", userHandler.UpdateUser)
-			v1.POST("/users/delete", userHandler.DeleteUser)
-		}
-	}
+	// 公开接口
+	v1.POST("/register", userHandler.Register)
+	v1.POST("/login", userHandler.Login)
+
+	// 需要认证的接口
+	v1.Use(middleware.AuthMiddleware()) // 创建一个新的作用域，Use() 方法会将中间件应用到后续注册的所有路由上
+
+	v1.POST("/users/list", userHandler.GetUserList)
+	v1.POST("/users/get", userHandler.GetUserByID)
+	v1.POST("/users/update", userHandler.UpdateUser)
+	v1.POST("/users/delete", userHandler.DeleteUser)
 
 	return router
 }

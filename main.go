@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,7 +42,7 @@ func main() {
 	// 在 goroutine 中启动服务器
 	go func() {
 		fmt.Printf("服务器启动在端口 %d\n", cfg.Server.Port)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("服务器启动失败: %v", err)
 		}
 	}()
