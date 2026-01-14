@@ -27,7 +27,7 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 
 	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
 	if err := lock.TryLock(ctx, 3, 100*time.Millisecond); err != nil {
-		if err == utils.ErrLockFailed {
+		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
 		}
 		return nil, err
@@ -159,7 +159,7 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 
 	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
 	if err := lock.TryLock(ctx, 3, 100*time.Millisecond); err != nil {
-		if err == utils.ErrLockFailed {
+		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
 		}
 		return nil, err
