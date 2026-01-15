@@ -22,11 +22,8 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 	rdb := application.GetRedis()
 	ctx := context.Background()
 
-	// 创建分布式锁，针对 username 加锁
 	lock := utils.NewRedisLock(rdb, "register:"+req.Username, 10*time.Second)
-
-	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
-	if err := lock.TryLock(ctx, 1, 100*time.Millisecond); err != nil {
+	if err := lock.TryLock(ctx, 1, 0); err != nil {
 		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
 		}
@@ -42,7 +39,6 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 		}
 	}()
 
-	// 检查用户名是否已存在
 	var count int64
 	if err := tx.Model(&model.User{}).Where("username = ? AND `delete` = 0", req.Username).Count(&count).Error; err != nil {
 		tx.Rollback()
@@ -53,14 +49,12 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 		return nil, errors.New("用户名已存在")
 	}
 
-	// 加密密码
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	// 创建用户
 	user := &model.User{
 		Username: req.Username,
 		Password: string(hashedPassword),
@@ -85,7 +79,6 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 func (s *UserService) Login(req *model.LoginRequest) (string, error) {
 	db := application.GetDB()
 
-	// 查询用户
 	var user model.User
 	if err := db.Where("username = ? AND `delete` = 0", req.Username).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -94,12 +87,10 @@ func (s *UserService) Login(req *model.LoginRequest) (string, error) {
 		return "", err
 	}
 
-	// 验证密码
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return "", errors.New("用户名或密码错误")
 	}
 
-	// 生成 token
 	token, err := utils.GenerateToken(user.ID, user.Username)
 	if err != nil {
 		return "", err
@@ -154,10 +145,7 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 	rdb := application.GetRedis()
 	ctx := context.Background()
 
-	// 创建分布式锁，针对用户 ID 加锁
 	lock := utils.NewRedisLock(rdb, fmt.Sprintf("update:user:%d", id), 10*time.Second)
-
-	// 尝试获取锁，最多重试 3 次，每次间隔 100ms
 	if err := lock.TryLock(ctx, 1, 100*time.Millisecond); err != nil {
 		if errors.Is(err, utils.ErrLockFailed) {
 			return nil, errors.New("系统繁忙，请稍后重试")
@@ -166,7 +154,6 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 	}
 	defer lock.Unlock(ctx)
 
-	// 开启事务
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -174,7 +161,6 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 		}
 	}()
 
-	// 查询用户是否存在
 	var user model.User
 	if err := tx.Where("id = ? AND `delete` = 0", id).First(&user).Error; err != nil {
 		tx.Rollback()
@@ -205,12 +191,10 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 		}
 	}
 
-	// 提交事务
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
 
-	// 重新查询用户
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}
@@ -222,7 +206,6 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 func (s *UserService) DeleteUser(id int64) error {
 	db := application.GetDB()
 
-	// 查询用户是否存在
 	var user model.User
 	if err := db.Where("id = ? AND `delete` = 0", id).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -231,7 +214,6 @@ func (s *UserService) DeleteUser(id int64) error {
 		return err
 	}
 
-	// 软删除
 	if err := db.Model(&user).Update("delete", 1).Error; err != nil {
 		return err
 	}
