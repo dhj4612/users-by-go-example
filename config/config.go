@@ -10,11 +10,12 @@ import (
 // 定义配置结构体
 
 type Config struct {
-	Server    ServerConfig   `yaml:"server" json:"server"`
-	Database  DatabaseConfig `yaml:"database" json:"database"`
-	Redis     RedisConfig    `yaml:"redis" json:"redis"`
-	JWT       JWTConfig      `yaml:"jwt" json:"jwt"`
-	WhiteList []string       `yaml:"white-list" json:"whiteList"`
+	Server     ServerConfig     `yaml:"server" json:"server"`
+	Database   DatabaseConfig   `yaml:"database" json:"database"`
+	Redis      RedisConfig      `yaml:"redis" json:"redis"`
+	JWT        JWTConfig        `yaml:"jwt" json:"jwt"`
+	WhiteList  []string         `yaml:"white_list" json:"whiteList"`
+	ApiPermits []ApiPermitsItem `yaml:"api_permits" json:"apiPermits"`
 }
 
 type ServerConfig struct {
@@ -40,6 +41,12 @@ type RedisConfig struct {
 type JWTConfig struct {
 	Secret     string `yaml:"secret" json:"secret"`
 	ExpireTime int    `yaml:"expire-time" json:"expireTime"` // 过期时间（小时）
+}
+
+type ApiPermitsItem struct {
+	Method  string `yaml:"method" json:"method"`
+	Path    string `yaml:"path" json:"path"`
+	Permits string `yaml:"permits" json:"permits"`
 }
 
 // Load 加载配置文件并返回配置对象

@@ -10,28 +10,22 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"users-by-go-example/global"
+	app "users-by-go-example/application"
 	"users-by-go-example/internal/router"
 )
 
 func main() {
-	// 初始化配置
-	global.InitConfig()
-
-	// 初始化数据库
-	global.InitDB()
-
-	// 初始化 Redis
-	global.InitRedis()
+	// 初始化外部资源
+	app.InitAll()
 
 	// 延迟关闭资源
-	defer global.Close()
+	defer app.Close()
 
 	// 设置路由
 	r := router.SetupRouter()
 
 	// 启动服务器
-	cfg := global.GetConfig()
+	cfg := app.GetConfig()
 	addr := fmt.Sprintf(":%d", cfg.Server.Port)
 
 	srv := &http.Server{

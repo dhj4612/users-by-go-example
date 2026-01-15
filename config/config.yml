@@ -19,7 +19,24 @@ jwt:
   secret: 'wS8hS8dJ1nG2dV3qS6yH1jA5xV7zF7fN'
   expire-time: 24
 
-white-list:
+white_list:
   - '/api/v1/login'
   - '/api/v1/register'
+
+api_permits:
+  - method: 'POST'
+    path: '/api/v1/users/list'
+    permits: 'user:list'
+
+  - method: 'POST'
+    path: '/api/v1/users/get'
+    permits: 'user:get'
+
+  - method: 'POST'
+    path: '/api/v1/users/update'
+    permits: 'user:update'
+
+  - method: 'POST'
+    path: '/api/v1/users/delete'
+    permits: 'user:delete'
 

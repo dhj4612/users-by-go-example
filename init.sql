@@ -17,3 +17,18 @@ CREATE TABLE IF NOT EXISTS `users`
     UNIQUE KEY `uk_username` (`username`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
+
+CREATE TABLE IF NOT EXISTS `permission`
+(
+    `id`     bigint(20)   NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `permit` varchar(100) NOT NULL COMMENT '权限标识',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='权限表';
+
+CREATE TABLE IF NOT EXISTS `user_permission`
+(
+    `user_id`       bigint(20) NOT NULL COMMENT '用户id',
+    `permission_id` bigint(20) NOT NULL COMMENT '权限id'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='用户-权限关联表';

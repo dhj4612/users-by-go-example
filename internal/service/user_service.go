@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	"users-by-go-example/global"
+	"users-by-go-example/application"
 	"users-by-go-example/internal/model"
 	"users-by-go-example/utils"
 
@@ -18,8 +18,8 @@ type UserService struct{}
 
 // Register 用户注册
 func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse, error) {
-	db := global.GetDB()
-	rdb := global.GetRedis()
+	db := application.GetDB()
+	rdb := application.GetRedis()
 	ctx := context.Background()
 
 	// 创建分布式锁，针对 username 加锁
@@ -83,7 +83,7 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 
 // Login 用户登录
 func (s *UserService) Login(req *model.LoginRequest) (string, error) {
-	db := global.GetDB()
+	db := application.GetDB()
 
 	// 查询用户
 	var user model.User
@@ -110,7 +110,7 @@ func (s *UserService) Login(req *model.LoginRequest) (string, error) {
 
 // GetUserList 获取用户列表
 func (s *UserService) GetUserList(page, pageSize int) ([]*model.UserResponse, int64, error) {
-	db := global.GetDB()
+	db := application.GetDB()
 
 	var users []model.User
 	var total int64
@@ -135,7 +135,7 @@ func (s *UserService) GetUserList(page, pageSize int) ([]*model.UserResponse, in
 
 // GetUserByID 根据 ID 获取用户
 func (s *UserService) GetUserByID(id int64) (*model.UserResponse, error) {
-	db := global.GetDB()
+	db := application.GetDB()
 
 	var user model.User
 	if err := db.Where("id = ? AND `delete` = 0", id).First(&user).Error; err != nil {
@@ -150,8 +150,8 @@ func (s *UserService) GetUserByID(id int64) (*model.UserResponse, error) {
 
 // UpdateUser 更新用户信息
 func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model.UserResponse, error) {
-	db := global.GetDB()
-	rdb := global.GetRedis()
+	db := application.GetDB()
+	rdb := application.GetRedis()
 	ctx := context.Background()
 
 	// 创建分布式锁，针对用户 ID 加锁
@@ -220,7 +220,7 @@ func (s *UserService) UpdateUser(id int64, req *model.UpdateUserRequest) (*model
 
 // DeleteUser 删除用户（软删除）
 func (s *UserService) DeleteUser(id int64) error {
-	db := global.GetDB()
+	db := application.GetDB()
 
 	// 查询用户是否存在
 	var user model.User

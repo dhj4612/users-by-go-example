@@ -21,8 +21,8 @@ func SetupRouter() *gin.Engine {
 	v1.POST("/register", userHandler.Register)
 	v1.POST("/login", userHandler.Login)
 
-	// 需要认证的接口
-	v1.Use(middleware.AuthMiddleware()) // 创建一个新的作用域，Use() 方法会将中间件应用到后续注册的所有路由上
+	// 需要认证的接口（创建一个新的作用域，Use() 方法会将中间件应用到后续注册的所有路由上）
+	v1.Use(middleware.AuthorizationCheck(), middleware.PermissionCheck())
 
 	v1.POST("/users/list", userHandler.GetUserList)
 	v1.POST("/users/get", userHandler.GetUserByID)

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 	"users-by-go-example/utils"
@@ -8,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthMiddleware JWT 认证中间件
-func AuthMiddleware() gin.HandlerFunc {
+// AuthorizationCheck JWT 认证中间件
+func AuthorizationCheck() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// 检查是否在白名单中
 		//cfg := global.GetConfig()
@@ -53,6 +54,9 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+
+		log.SetPrefix("[AuthorizationCheck] ")
+		log.Printf("LoginUser=%+v", claims)
 
 		// 将用户信息存储到上下文中
 		ctx.Set("userId", claims.UserID)
