@@ -17,6 +17,8 @@ func SetupRouter() *gin.Engine {
 	// API v1 路由组
 	v1 := router.Group("/api/v1")
 
+	v1.Use(middleware.RequestId())
+
 	// 公开接口
 	v1.POST("/register", userHandler.Register)
 	v1.POST("/login", userHandler.Login)

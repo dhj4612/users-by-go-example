@@ -3,6 +3,7 @@ package handler
 import (
 	"users-by-go-example/internal/model"
 	"users-by-go-example/internal/service"
+	"users-by-go-example/logger"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,13 +22,13 @@ func NewUserHandler() *UserHandler {
 
 // Register 用户注册
 func (h *UserHandler) Register(ctx *gin.Context) {
-	var req model.RegisterRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.RegisterRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
-	user, err := h.userService.Register(&req)
+	user, err := h.userService.Register(&params)
 	if err != nil {
 		BadRequest(ctx, err.Error())
 		return
@@ -38,13 +39,15 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 
 // Login 用户登录
 func (h *UserHandler) Login(ctx *gin.Context) {
-	var req model.LoginRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.LoginRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
-	token, err := h.userService.Login(&req)
+	logger.GetLogger(ctx).Info("用户登录参数 %v", params)
+
+	token, err := h.userService.Login(&params)
 	if err != nil {
 		Unauthorized(ctx, err.Error())
 		return
@@ -57,15 +60,15 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 
 // GetUserList 获取用户列表
 func (h *UserHandler) GetUserList(ctx *gin.Context) {
-	var req model.GetUserListRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.GetUserListRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
 	// 设置默认值
-	page := req.Page
-	pageSize := req.PageSize
+	page := params.Page
+	pageSize := params.PageSize
 	if page < 1 {
 		page = 1
 	}
@@ -92,13 +95,13 @@ func (h *UserHandler) GetUserList(ctx *gin.Context) {
 
 // GetUserByID 根据 ID 获取用户
 func (h *UserHandler) GetUserByID(ctx *gin.Context) {
-	var req model.GetUserByIDRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.GetUserByIDRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
-	user, err := h.userService.GetUserByID(req.ID)
+	user, err := h.userService.GetUserByID(params.ID)
 	if err != nil {
 		NotFound(ctx, err.Error())
 		return
@@ -109,13 +112,13 @@ func (h *UserHandler) GetUserByID(ctx *gin.Context) {
 
 // UpdateUser 更新用户信息
 func (h *UserHandler) UpdateUser(ctx *gin.Context) {
-	var req model.UpdateUserRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.UpdateUserRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
-	user, err := h.userService.UpdateUser(req.ID, &req)
+	user, err := h.userService.UpdateUser(params.ID, &params)
 	if err != nil {
 		BadRequest(ctx, err.Error())
 		return
@@ -126,13 +129,13 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 
 // DeleteUser 删除用户
 func (h *UserHandler) DeleteUser(ctx *gin.Context) {
-	var req model.DeleteUserRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var params model.DeleteUserRequest
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		BadRequest(ctx, "参数错误: "+err.Error())
 		return
 	}
 
-	if err := h.userService.DeleteUser(req.ID); err != nil {
+	if err := h.userService.DeleteUser(params.ID); err != nil {
 		BadRequest(ctx, err.Error())
 		return
 	}
