@@ -16,6 +16,7 @@ type Config struct {
 	JWT        JWTConfig        `yaml:"jwt" json:"jwt"`
 	WhiteList  []string         `yaml:"white_list" json:"whiteList"`
 	ApiPermits []ApiPermitsItem `yaml:"api_permits" json:"apiPermits"`
+	LoggerConf LoggerConfig     `yaml:"logger" json:"logger"`
 }
 
 type ServerConfig struct {
@@ -47,6 +48,10 @@ type ApiPermitsItem struct {
 	Method  string `yaml:"method" json:"method"`
 	Path    string `yaml:"path" json:"path"`
 	Permits string `yaml:"permits" json:"permits"`
+}
+
+type LoggerConfig struct {
+	Level string `yaml:"level" json:"level"`
 }
 
 // Load 加载配置文件并返回配置对象

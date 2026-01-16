@@ -40,3 +40,6 @@ api_permits:
     path: '/api/v1/users/delete'
     permits: 'user:delete'
 
+
+logger:
+  level: info
