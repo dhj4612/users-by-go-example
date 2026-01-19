@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"slices"
 	"strings"
 	"users-by-go-example/application"
+	"users-by-go-example/logger"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,8 +25,8 @@ func PermissionCheck() gin.HandlerFunc {
 			permits = append(permits, permitValue)
 		}
 
-		log.SetPrefix("[PermissionCheck] ")
-		log.Printf("Api=%s Permits=%s", key, permits)
+		log := logger.GetLogger(ctx)
+		log.Info("Api=%s Permits=%s", key, permits)
 
 		userId, exists := ctx.Get("userId")
 		if !exists {
@@ -46,7 +45,7 @@ func PermissionCheck() gin.HandlerFunc {
 						JOIN user_permission up ON p.id = up.permission_id
 						WHERE up.user_id = ?`, userId).Scan(&permitsOfUser)
 
-		fmt.Printf("user permits=%v\n", permitsOfUser)
+		log.Info("user permits=%v\n", permitsOfUser)
 
 		if slices.Contains(permitsOfUser, "*") {
 			ctx.Next()

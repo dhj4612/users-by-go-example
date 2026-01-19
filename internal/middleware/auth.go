@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"strings"
+	"users-by-go-example/logger"
 	"users-by-go-example/utils"
 
 	"github.com/gin-gonic/gin"
@@ -55,8 +55,7 @@ func AuthorizationCheck() gin.HandlerFunc {
 			return
 		}
 
-		log.SetPrefix("[AuthorizationCheck] ")
-		log.Printf("LoginUser=%+v", claims)
+		logger.GetLogger(ctx).Info("LoginUser=%+v", claims)
 
 		// 将用户信息存储到上下文中
 		ctx.Set("userId", claims.UserID)

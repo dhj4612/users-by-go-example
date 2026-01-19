@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -49,11 +50,21 @@ func SetLogger(ctx *gin.Context, logger *Logger) {
 	ctx.Set(loggerKey, logger)
 }
 
+func getCallerPath() string {
+	// skip=3: getCallerPath -> formatLog -> Info/Error/Warn/Debug -> 实际调用位置
+	_, file, line, ok := runtime.Caller(3)
+	if ok {
+		//return fmt.Sprintf("%s:%d %s", file, line, runtime.FuncForPC(pc).Name()) // funcName
+		return fmt.Sprintf("%s:%d", file, line)
+	}
+	return ""
+}
+
 // formatLog 格式化日志行，包括时间戳、requestId、日志级别和消息
 func (l *Logger) formatLog(level, color, format string, v ...any) string {
 	timestamp := time.Now().Format(time.DateTime)
 	message := fmt.Sprintf(format, v...)
-	return fmt.Sprintf("%s[%s] [%s] [%s] %s%s", color, level, l.requestId, timestamp, message, colorReset)
+	return fmt.Sprintf("%s[%s] [%s] [%s] %s %s%s", color, level, l.requestId, timestamp, getCallerPath(), message, colorReset)
 }
 
 // Info 输出 Info 级别日志（绿色）
