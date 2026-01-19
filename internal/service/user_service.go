@@ -40,7 +40,7 @@ func (s *UserService) Register(req *model.RegisterRequest) (*model.UserResponse,
 	}()
 
 	var count int64
-	if err := tx.Model(&model.User{}).Where("username = ? AND `delete` = 0", req.Username).Count(&count).Error; err != nil {
+	if err := tx.Raw("SELECT COUNT(id) FROM users WHERE username = ? AND `delete` = 0", req.Username).Count(&count).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (s *UserService) Login(req *model.LoginRequest) (string, error) {
 	db := application.GetDB()
 
 	var user model.User
-	if err := db.Where("username = ? AND `delete` = 0", req.Username).First(&user).Error; err != nil {
+	if err := db.Raw("SELECT id,username,password FROM users WHERE username = ? AND `delete` = 0", req.Username).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", errors.New("用户名或密码错误")
 		}
