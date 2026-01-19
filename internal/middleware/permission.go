@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-	"slices"
 	"strings"
 	"users-by-go-example/application"
 	"users-by-go-example/logger"
@@ -47,14 +46,20 @@ func PermissionCheck() gin.HandlerFunc {
 
 		log.Info("user permits=%v\n", permitsOfUser)
 
-		if slices.Contains(permitsOfUser, "*") {
+		permitOfUserMap := make(map[string]bool)
+		for _, permit := range permitsOfUser {
+			if permit != "" {
+				permitOfUserMap[permit] = true
+			}
+		}
+
+		if permitOfUserMap["*"] {
 			ctx.Next()
 			return
 		}
 
-		for i := 0; i < len(permits); i++ {
-			allow := slices.Contains(permitsOfUser, permits[i])
-			if !allow {
+		for _, permit := range permits {
+			if !permitOfUserMap[permit] {
 				ctx.JSON(http.StatusForbidden, gin.H{
 					"code":    http.StatusForbidden,
 					"message": "未授权的访问",

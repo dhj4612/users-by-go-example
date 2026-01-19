@@ -25,8 +25,8 @@ func main() {
 	r := router.SetupRouter()
 
 	// 启动服务器
-	cfg := app.GetConfig()
-	addr := fmt.Sprintf(":%d", cfg.Server.Port)
+	conf := app.GetConfig()
+	addr := fmt.Sprintf(":%d", conf.Server.Port)
 
 	srv := &http.Server{
 		Addr:    addr,
@@ -35,7 +35,7 @@ func main() {
 
 	// 在 goroutine 中启动服务器
 	go func() {
-		fmt.Printf("服务器启动在端口 %d\n", cfg.Server.Port)
+		fmt.Printf("服务器启动在端口 %d\n", conf.Server.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("服务器启动失败: %v", err)
 		}
