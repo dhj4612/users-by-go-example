@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	"users-by-go-example/application"
+	"users-by-go-example/internal/application"
 	"users-by-go-example/internal/model"
 	"users-by-go-example/utils"
 

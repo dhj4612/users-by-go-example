@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	"users-by-go-example/application"
+	"users-by-go-example/internal/application"
 	"users-by-go-example/logger"
 
 	"github.com/gin-gonic/gin"

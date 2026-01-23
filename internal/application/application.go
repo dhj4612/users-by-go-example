@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 	"time"
-	"users-by-go-example/config"
+	"users-by-go-example/internal/config"
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"

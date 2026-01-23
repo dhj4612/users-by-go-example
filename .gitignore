@@ -90,6 +90,6 @@ Desktop.ini
 .claude/
 
 # Config files with secrets (keep templates)
-config/local.yaml
-config/prod.yaml
-config/*-local.yaml
+internal/config/local.yaml
+internal/config/prod.yaml
+internal/config/*-local.yaml

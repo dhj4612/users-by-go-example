@@ -10,7 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	app "users-by-go-example/application"
+	app "users-by-go-example/internal/application"
 	"users-by-go-example/internal/router"
 )
 

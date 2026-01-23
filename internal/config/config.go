@@ -56,7 +56,7 @@ type LoggerConfig struct {
 
 // Load 加载配置文件并返回配置对象
 func Load() *Config {
-	data, err := os.ReadFile("config/config.yml")
+	data, err := os.ReadFile("internal/config/config.yml")
 	if err != nil {
 		log.Fatalf("配置加载失败: %v", err)
 	}
